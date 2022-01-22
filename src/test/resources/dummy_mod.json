@@ -1,0 +1,10 @@
+{
+  "id": "6kq7BzRK",
+  "slug": "modmanager",
+  "name": "Mod Manager",
+  "author": "",
+  "shortDescription": "An extension for Mod Menu which allows you to manage your mods in game",
+  "iconUrl": "https://cdn.modrinth.com/data/6kq7BzRK/icon.png",
+  "description": "",
+  "license": "Apache License 2.0"
+}

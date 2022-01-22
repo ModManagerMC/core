@@ -1,0 +1,3 @@
+[submodule "translations"]
+	path = src/main/resources/assets/modmanager/lang
+	url = https://github.com/ModManagerMC/translations.git
