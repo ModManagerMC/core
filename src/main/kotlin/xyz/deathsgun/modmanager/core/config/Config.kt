@@ -17,15 +17,18 @@
 package xyz.deathsgun.modmanager.core.config
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import java.io.FileNotFoundException
 import java.nio.file.Files
+import java.nio.file.NoSuchFileException
+import java.nio.file.Paths
 
+@Serializable
 data class Config(
     var defaultProvider: String = "modrinth",
     var updateChannel: UpdateChannel = UpdateChannel.ALL,
@@ -42,12 +45,12 @@ data class Config(
         @OptIn(ExperimentalSerializationApi::class)
         fun loadConfig(): Config {
             return try {
-                val file = FabricLoader.getInstance().configDir.resolve("modmanager.json")
+                val file = Paths.get("config", "modmanager", "modmanager.json")
                 Files.createDirectories(file.parent)
                 val data = Files.readAllBytes(file).decodeToString()
                 json.decodeFromString(data)
             } catch (e: Exception) {
-                if (e !is FileNotFoundException) {
+                if (e !is FileNotFoundException && e !is NoSuchFileException) {
                     e.printStackTrace()
                 }
                 saveConfig(Config())
@@ -57,7 +60,9 @@ data class Config(
         @OptIn(ExperimentalSerializationApi::class)
         fun saveConfig(config: Config): Config {
             try {
-                val file = FabricLoader.getInstance().configDir.resolve("modmanager.json")
+                val dir = Paths.get("config", "modmanager")
+                dir.toFile().mkdirs()
+                val file = dir.resolve("modmanager.json")
                 val data = json.encodeToString(config)
                 Files.write(file, data.encodeToByteArray())
             } catch (ignored: Exception) {

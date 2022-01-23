@@ -25,7 +25,7 @@ object ModManager {
 
     private lateinit var modManagerBuildInfo: Properties
     private val buildInfo = Properties()
-    val config = Config.loadConfig()
+    var config = Config.loadConfig()
     val provider: List<IModProvider>
         get() = FabricLoader.getInstance().getEntrypoints("modmanager", IModProvider::class.java)
 
