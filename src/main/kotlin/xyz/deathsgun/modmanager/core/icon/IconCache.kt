@@ -21,16 +21,20 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Identifier
-import org.apache.commons.io.FileUtils
 import org.apache.logging.log4j.LogManager
 import xyz.deathsgun.modmanager.core.api.http.HttpClient
 import xyz.deathsgun.modmanager.core.api.mod.Mod
 import java.io.InputStream
+import java.lang.IllegalStateException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
+import kotlin.jvm.Throws
 
+/**
+ * Global cache for ModManager's icons
+ */
 object IconCache {
 
     private val logger = LogManager.getLogger("IconCache")
@@ -53,10 +57,22 @@ object IconCache {
         loader = textureLoader
     }
 
+    /**
+     * This method gets called by the rendering method which binds
+     * the icon. It will start downloading the icon in the background
+     * and will show a loading icon.
+     * In case of an error it will return a default error icon.
+     * @return in the best case the icon of the mod. In the worst an error icon
+     * @throws IllegalStateException when [IconCache.init] hasn't been called before
+     */
     @JvmStatic
     @OptIn(DelicateCoroutinesApi::class)
-    fun get(mod: Mod): Identifier =
-        when (this.state[mod.id] ?: IconState.NOT_FOUND) {
+    @Throws(IllegalStateException::class)
+    fun get(mod: Mod): Identifier {
+        if (this::iconsDir.isInitialized) {
+            throw IllegalStateException()
+        }
+        return when (this.state[mod.id] ?: IconState.NOT_FOUND) {
             IconState.NOT_FOUND -> {
                 GlobalScope.launch {
                     downloadIcon(mod)
@@ -72,6 +88,7 @@ object IconCache {
             IconState.DOWNLOADING -> loadingIcon
             IconState.ERRORED -> unknownIcon
         }
+    }
 
     private fun readIcon(mod: Mod): Identifier {
         return try {
@@ -86,6 +103,10 @@ object IconCache {
     }
 
     private fun downloadIcon(mod: Mod) {
+        if (Files.exists(iconsDir.resolve(mod.id))) {
+            state[mod.id] = IconState.DOWNLOADED
+            return
+        }
         if (mod.iconUrl == null) {
             state[mod.id] = IconState.ERRORED
             return
@@ -104,20 +125,26 @@ object IconCache {
         }
     }
 
+    /**
+     * Unloads all icons with the state [IconState.LOADED]
+     * and resets them to [IconState.DOWNLOADED]
+     */
     @JvmStatic
     fun destroyAll() {
-        for ((mod, state) in state) {
-            if (state != IconState.LOADED) {
-                continue
-            }
+        val loadedMods = state.filter { it.value == IconState.LOADED }.keys
+        for (mod in loadedMods) {
             val icon = Identifier("modmanager", "mod_icons/${mod.lowercase()}")
             MinecraftClient.getInstance().textureManager.destroyTexture(icon)
             this.state[mod] = IconState.DOWNLOADED
         }
     }
 
+    /**
+     * Removes files from the icon cache until the maximum of
+     * 10MB has been reached.
+     */
     @JvmStatic
-    fun clear() {
+    fun clean() {
         logger.info("Cleaning icon cache...")
         val files = Files.list(iconsDir)
             .sorted { o1, o2 ->
@@ -127,7 +154,7 @@ object IconCache {
             logger.info("No cleanup required")
             return
         }
-        var i = 0;
+        var i = 0
         while (Files.list(iconsDir).mapToLong { it.toFile().length() }.sum() >= 10000000) {
             if (files.size <= i) {
                 return

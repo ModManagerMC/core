@@ -1,7 +1,7 @@
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
-    id("fabric-loom") version "0.7-SNAPSHOT"
+    kotlin("jvm")
+    kotlin("plugin.serialization")
+    id("fabric-loom")
 }
 
 group = "xyz.deathsgun.modmanager"

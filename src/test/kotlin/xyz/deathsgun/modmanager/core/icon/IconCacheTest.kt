@@ -74,7 +74,7 @@ internal object IconCacheTest {
         val f = RandomAccessFile(cacheDirectory.resolve("bigFile").toFile(), "rw")
         f.setLength((1024 * 1024 * 20).toLong())
         f.close()
-        IconCache.clear()
+        IconCache.clean()
         assertTrue(Files.notExists(cacheDirectory.resolve("bigFile")))
         assertTrue(FileUtils.sizeOfDirectory(cacheDirectory.toFile()) <= 10000000, "Directory caching has not worked!")
     }
