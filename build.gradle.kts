@@ -61,4 +61,5 @@ tasks.compileTestKotlin {
 tasks.test {
     useJUnitPlatform()
     workingDir = File("run")
+    workingDir.mkdirs()
 }

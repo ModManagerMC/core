@@ -25,12 +25,10 @@ import org.apache.logging.log4j.LogManager
 import xyz.deathsgun.modmanager.core.api.http.HttpClient
 import xyz.deathsgun.modmanager.core.api.mod.Mod
 import java.io.InputStream
-import java.lang.IllegalStateException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
-import kotlin.jvm.Throws
 
 /**
  * Global cache for ModManager's icons
@@ -69,7 +67,7 @@ object IconCache {
     @OptIn(DelicateCoroutinesApi::class)
     @Throws(IllegalStateException::class)
     fun get(mod: Mod): Identifier {
-        if (this::iconsDir.isInitialized) {
+        if (!this::iconsDir.isInitialized) {
             throw IllegalStateException()
         }
         return when (this.state[mod.id] ?: IconState.NOT_FOUND) {
