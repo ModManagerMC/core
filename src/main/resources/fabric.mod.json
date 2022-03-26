@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "ModManager Core",
+  "id": "modmanager-core",
+  "version": "${version}",
+  "authors": [
+	"DeathsGun"
+  ],
+  "icon": "assets/modmanager/icon.png",
+  "description": "Version independent core of ModManager",
+  "contact": {
+    "sources": "https://github.com/ModManagerMC/core",
+    "issues": "https://github.com/ModManagerMC/core/issues"
+  },
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "net.modmanagermc.core.Core"
+      }
+    ]
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "parent": "modmanager"
+    }
+  }
+}
