@@ -17,10 +17,8 @@ import org.apache.logging.log4j.LogManager
 class UpdateService(di: DI) : IUpdateService {
 
     private val modService: IModService by di
-    private val config: Config by di
     private val logger = LogManager.getLogger(UpdateService::class.java)
     private var status: ProcessingStatus = ProcessingStatus.PENDING
-    private val client = HttpClients.createDefault()
 
     override val processingStatus: ProcessingStatus
         get() {

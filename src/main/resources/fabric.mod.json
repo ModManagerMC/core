@@ -13,14 +13,6 @@
     "issues": "https://github.com/ModManagerMC/core/issues"
   },
   "environment": "client",
-  "entrypoints": {
-    "client": [
-      {
-        "adapter": "kotlin",
-        "value": "net.modmanagermc.core.Core"
-      }
-    ]
-  },
   "custom": {
     "modmenu": {
       "badges": [

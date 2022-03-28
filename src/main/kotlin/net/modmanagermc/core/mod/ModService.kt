@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager
 class ModService(di: DI) : IModService {
 
     private val logger = LogManager.getLogger(ModService::class.java)
-    private val providerList: MutableList<IProvider> = mutableListOf()
+    private val providerList: MutableList<IProvider> = mutableListOf(Modrinth(di))
     override val providers: List<IProvider> get() = providerList
     private val discoveryService: IModDiscoveryService by di
 

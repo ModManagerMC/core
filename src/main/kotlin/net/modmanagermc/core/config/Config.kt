@@ -5,8 +5,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
-import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -72,8 +70,8 @@ data class Config(
     enum class UpdateChannel {
         ALL, STABLE, UNSTABLE;
 
-        fun translation(): Text {
-            return TranslatableText(String.format("modmanager.channel.%s", name.lowercase()))
+        fun translationKey(): String {
+            return String.format("modmanager.channel.%s", name.lowercase())
         }
     }
 

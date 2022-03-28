@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("fabric-loom")
 }
 
 group = "net.modmanagermc"
@@ -14,28 +13,14 @@ repositories {
     mavenCentral()
 }
 
-val minecraftVersion: String by project
-val yarnMappings: String by project
 val loaderVersion: String by project
 val fabricKotlinVersion: String by project
 
 dependencies {
-    minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings("net.fabricmc:yarn:$yarnMappings:v2")
-
-    modImplementation("net.fabricmc:fabric-loader:${loaderVersion}")
-    includeMod("net.fabricmc:fabric-language-kotlin:${fabricKotlinVersion}")
-}
-
-
-fun DependencyHandler.includeMod(dep: Any) {
-    modImplementation(dep)
-    include(dep)
-}
-
-fun DependencyHandler.includeApi(dep: Any) {
-    api(dep)
-    include(dep)
+    implementation("net.fabricmc:fabric-language-kotlin:${fabricKotlinVersion}")
+    api("net.fabricmc:fabric-loader:$loaderVersion")
+    api("org.apache.httpcomponents:httpclient:4.5.13")
+    api("org.apache.logging.log4j:log4j-api:2.17.0")
 }
 
 val releaseTarget: String by project
@@ -45,13 +30,6 @@ tasks.getByName<ProcessResources>("processResources") {
             mutableMapOf(
                 "version" to version,
                 "fabricKotlinVersion" to fabricKotlinVersion,
-            )
-        )
-    }
-    filesMatching("buildInfo.json") {
-        expand(
-            mutableMapOf(
-                "releaseTarget" to minecraftVersion,
             )
         )
     }

@@ -21,7 +21,7 @@ import net.modmanagermc.core.update.UpdateService
  * @since Core 1.0.0
  * @author DeathsGun
  */
-object Core : ClientModInitializer {
+object Core {
 
     @OptIn(ExperimentalSerializationApi::class)
     private val buildInfo: Map<String, String> =
@@ -34,12 +34,6 @@ object Core : ClientModInitializer {
         bind<IModDiscoveryService> { ModDiscoveryService() }
         bind<IModService> { ModService(this) }
         bind<IUpdateService> { UpdateService(this) }
-    }
-
-    override fun onInitializeClient() {
-        //TODO: Move to ModManager Impl
-        val updateService: IUpdateService by di
-        updateService.checkUpdate()
     }
 
 }
