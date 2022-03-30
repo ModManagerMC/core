@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: setup jdk 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: create run directory
+        run: mkdir run
+      - name: test
+        run: ./gradlew -Psnapshot publish
+        env:
+          MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
+          MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}

@@ -1,10 +1,31 @@
-name: Qodana
+name: Quality
 on:
-  workflow_dispatch:
   pull_request:
   push:
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: setup jdk 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: create run directory
+        run: mkdir run
+      - name: test
+        run: ./gradlew test
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: build/test-results/**/*.xml
   qodana:
     runs-on: ubuntu-latest
     steps:

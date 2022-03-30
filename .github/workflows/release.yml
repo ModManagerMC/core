@@ -1,9 +1,9 @@
-name: Test
-
-on: [ push ]
-
+on:
+  push:
+    tags:
+      - "v*"
 jobs:
-  test:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repository
@@ -19,9 +19,7 @@ jobs:
       - name: create run directory
         run: mkdir run
       - name: test
-        run: ./gradlew test
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: always()
-        with:
-          files: build/test-results/**/*.xml
+        run: ./gradlew publish
+        env:
+          MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
+          MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}
