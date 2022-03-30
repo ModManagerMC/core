@@ -59,7 +59,7 @@ publishing {
         maven {
             val releasesRepoUrl = "https://maven.modmanagermc.net/releases"
             val snapshotsRepoUrl = "https://maven.modmanagermc.net/snapshots"
-            url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+            url = uri(if (project.hasProperty("snapshot")) snapshotsRepoUrl else releasesRepoUrl)
             credentials {
                 username = System.getenv("MAVEN_NAME")
                 password = System.getenv("MAVEN_TOKEN")
