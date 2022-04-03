@@ -28,6 +28,7 @@ class UpdateService(di: DI) : IUpdateService {
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun checkUpdate() {
+        logger.info("Checking for updates...")
         GlobalScope.launch(Dispatchers.IO) {
             val modInfos = modService.createJarFileInfo()
             if (modInfos.isEmpty()) {

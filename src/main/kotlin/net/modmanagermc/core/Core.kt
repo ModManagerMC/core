@@ -1,17 +1,12 @@
 package net.modmanagermc.core
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
-import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.loader.api.FabricLoader
 import net.modmanagermc.core.config.Config
 import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.discover.IModDiscoveryService
 import net.modmanagermc.core.discover.ModDiscoveryService
 import net.modmanagermc.core.mod.IModService
 import net.modmanagermc.core.mod.ModService
-import net.modmanagermc.core.provider.IProvider
-import net.modmanagermc.core.provider.modrinth.Modrinth
 import net.modmanagermc.core.update.IUpdateService
 import net.modmanagermc.core.update.UpdateService
 
@@ -23,10 +18,11 @@ import net.modmanagermc.core.update.UpdateService
  */
 object Core {
 
-    @OptIn(ExperimentalSerializationApi::class)
-    private val buildInfo: Map<String, String> =
-        Json.decodeFromStream(Core::class.java.getResourceAsStream("/buildInfo.json")!!)
-    val minecraftVersion: String = buildInfo["releaseTarget"]!!
+    val minecraftVersion: String
+        get() {
+            return FabricLoader.getInstance().getModContainer("minecraft")
+                .get().metadata.version.friendlyString
+        }
 
     @JvmStatic
     val di = DI {
