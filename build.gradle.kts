@@ -13,9 +13,6 @@ repositories {
     maven("https://maven.fabricmc.net") {
         name = "Fabric"
     }
-    maven("https://maven.modmanagermc.net/snapshots") {
-        name = "ModManagerMC"
-    }
     mavenCentral()
 }
 
@@ -33,18 +30,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
 
-val releaseTarget: String by project
-tasks.getByName<ProcessResources>("processResources") {
-    filesMatching("fabric.mod.json") {
-        expand(
-            mutableMapOf(
-                "version" to version,
-                "fabricKotlinVersion" to fabricKotlinVersion,
-            )
-        )
-    }
-}
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
 }
@@ -54,21 +39,35 @@ val sourcesJar by tasks.registering(Jar::class) {
     from(sourceSets.main.get().allSource)
 }
 
+tasks {
+    test {
+        workingDir("run")
+    }
+    processResources {
+        filesMatching("fabric.mod.json") {
+            expand(
+                mutableMapOf(
+                    "version" to version,
+                    "fabricKotlinVersion" to fabricKotlinVersion,
+                )
+            )
+        }
+    }
+}
 
 publishing {
     repositories {
         maven {
-            val releasesRepoUrl = "https://maven.modmanagermc.net/releases"
-            val snapshotsRepoUrl = "https://maven.modmanagermc.net/snapshots"
-            url = uri(if (project.hasProperty("snapshot")) snapshotsRepoUrl else releasesRepoUrl)
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ModManagerMC/core")
             credentials {
-                username = System.getenv("MAVEN_NAME")
-                password = System.getenv("MAVEN_TOKEN")
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }
     publications {
-        register("mavenJava", MavenPublication::class) {
+        register<MavenPublication>("gpr") {
             from(components["java"])
             artifact(sourcesJar.get())
         }

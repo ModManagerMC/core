@@ -22,5 +22,4 @@ jobs:
       - name: test
         run: ./gradlew publish
         env:
-          MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
-          MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
