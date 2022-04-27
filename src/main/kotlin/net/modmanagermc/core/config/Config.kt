@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import java.io.FileNotFoundException
+import java.nio.file.NoSuchFileException
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -31,7 +32,6 @@ data class Config(
             encodeDefaults = true
         }
 
-        @OptIn(ExperimentalSerializationApi::class)
         fun loadConfig(): Config {
             return try {
                 val file = Paths.get("config", "modmanager", "modmanager.json")
@@ -46,8 +46,7 @@ data class Config(
             }
         }
 
-        @OptIn(ExperimentalSerializationApi::class)
-        fun saveConfig(config: Config): Config {
+        private fun saveConfig(config: Config): Config {
             try {
                 val dir = Paths.get("config", "modmanager")
                 dir.toFile().mkdirs()

@@ -18,18 +18,23 @@ import net.modmanagermc.core.update.UpdateService
  */
 object Core {
 
-    val minecraftVersion: String
-        get() {
-            return FabricLoader.getInstance().getModContainer("minecraft")
-                .get().metadata.version.friendlyString
-        }
+    fun getMinecraftVersion(di: DI): String {
+        val loader: FabricLoader by di
+        return loader.getModContainer("minecraft").get().metadata.version.friendlyString
+    }
 
+    private lateinit var _di: DI
     @JvmStatic
-    val di = DI {
-        bind<Config> { Config.loadConfig() }
-        bind<IModDiscoveryService> { ModDiscoveryService() }
-        bind<IModService> { ModService(this) }
-        bind<IUpdateService> { UpdateService(this) }
+    val di: DI get() = _di
+
+    fun init() {
+        _di = DI {
+            bind<Config> { Config.loadConfig() }
+            bind<IModDiscoveryService> { ModDiscoveryService(this) }
+            bind<IModService> { ModService(this) }
+            bind<IUpdateService> { UpdateService(this) }
+            bind<FabricLoader> { FabricLoader.getInstance() }
+        }
     }
 
 }

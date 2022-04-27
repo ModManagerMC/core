@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager
 
 class ModService(di: DI) : IModService {
 
+    private val fabricLoader: FabricLoader by di
     private val logger = LogManager.getLogger(ModService::class.java)
     private val providerList: MutableList<IProvider> = mutableListOf(Modrinth(di))
     override val providers: List<IProvider> get() = providerList
@@ -28,7 +29,7 @@ class ModService(di: DI) : IModService {
                 logger.debug(
                     "Skipping update check for {} because it has no jar in {}",
                     mod.id,
-                    FabricLoader.getInstance().gameDir.resolve("mods")
+                    fabricLoader.gameDir.resolve("mods")
                 )
                 continue
             }
@@ -42,20 +43,19 @@ class ModService(di: DI) : IModService {
                 )
             )
         }
-        logger.info("Checking {} from {} mods", modInfos.size, mods.size)
+        logger.info("Processed {} mods {} can be used", modInfos.size, mods.size)
         return modInfos
     }
 
-    override fun getVersions(fileInfo: JarFileInfo): List<Version> {
+    override fun getNewerVersions(fileInfo: JarFileInfo): List<Version> {
         val versions = mutableListOf<Version>()
-        for ((providerName) in fileInfo.provider) {
+        for (providerName in fileInfo.provider.keys) {
             val provider = providers.find { it.name == providerName }
             if (provider == null) {
                 logger.warn("Mod ${fileInfo.modId} requested provider $providerName but it's not available")
                 continue
             }
-            val providerVersions = provider.getVersions(fileInfo)
-
+            versions.addAll(provider.getVersions(fileInfo))
         }
         return versions
     }

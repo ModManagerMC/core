@@ -5,12 +5,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
-import net.modmanagermc.core.config.Config
 import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.mod.IModService
 import net.modmanagermc.core.model.JarFileInfo
 import net.modmanagermc.core.model.ProcessingStatus
-import org.apache.http.impl.client.HttpClients
 import org.apache.logging.log4j.LogManager
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -25,8 +23,6 @@ class UpdateService(di: DI) : IUpdateService {
             return status
         }
 
-
-    @OptIn(ExperimentalSerializationApi::class)
     override fun checkUpdate() {
         logger.info("Checking for updates...")
         GlobalScope.launch(Dispatchers.IO) {
@@ -36,14 +32,22 @@ class UpdateService(di: DI) : IUpdateService {
                 return@launch
             }
             for (fileInfo in modInfos) {
-                checkUpdate(fileInfo)
+                try {
+                    checkUpdate(fileInfo)
+                } catch (e: Exception) {
+                    logger.error("Failed to check for updates for mod '{}': {}", fileInfo.modId, e)
+                }
             }
+            status = ProcessingStatus.DONE
         }
     }
 
     private fun checkUpdate(fileInfo: JarFileInfo) {
-        val versions = modService.getVersions(fileInfo)
-
+        val versions = modService.getNewerVersions(fileInfo)
+        if (versions.isEmpty()) {
+            logger.info("No updates found")
+            return
+        }
     }
 
 }

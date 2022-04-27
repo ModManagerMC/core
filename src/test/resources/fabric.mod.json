@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "core-test",
+  "name": "ModManager Core",
+  "version": "1.0",
+  "authors": [
+    "DeathsGun"
+  ]
+}

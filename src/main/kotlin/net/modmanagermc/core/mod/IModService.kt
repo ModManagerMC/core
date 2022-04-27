@@ -5,7 +5,6 @@ import net.modmanagermc.core.model.Version
 import net.modmanagermc.core.provider.IProvider
 
 /**
- *
  * @author DeathsGun
  * @since Core 1.0.0
  */
@@ -15,7 +14,7 @@ interface IModService {
 
     suspend fun createJarFileInfo(): List<JarFileInfo>
 
-    fun getVersions(fileInfo: JarFileInfo): List<Version>
+    fun getNewerVersions(fileInfo: JarFileInfo): List<Version>
 
     fun registerProvider(provider: IProvider)
 

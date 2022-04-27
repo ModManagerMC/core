@@ -1,4 +1,4 @@
-package net.modmanagermc.core.dummy
+package net.modmanagermc.core.test
 
 import net.fabricmc.api.EnvType
 import net.fabricmc.loader.api.FabricLoader
@@ -10,9 +10,11 @@ import java.io.File
 import java.nio.file.Path
 import java.util.*
 
-class DummyFabric : FabricLoader {
+class DummyFabricLoader(private val mods: MutableList<ModContainer>) : FabricLoader {
 
-    private val baseDir = File(System.getProperty("java.io.tmpdir"), "mm-core-tests")
+    init {
+        mods.add(DummyMinecraftContainer())
+    }
 
     override fun <T : Any?> getEntrypoints(key: String?, type: Class<T>?): MutableList<T> {
         return mutableListOf()
@@ -33,12 +35,12 @@ class DummyFabric : FabricLoader {
         return null
     }
 
-    override fun getModContainer(id: String?): Optional<ModContainer> {
-        return Optional.empty()
+    override fun getModContainer(id: String): Optional<ModContainer> {
+        return mods.stream().filter { it.metadata.id == id }.findFirst()
     }
 
     override fun getAllMods(): MutableCollection<ModContainer> {
-        return mutableListOf()
+        return mods
     }
 
     override fun isModLoaded(id: String?): Boolean {
@@ -53,27 +55,28 @@ class DummyFabric : FabricLoader {
         return EnvType.CLIENT
     }
 
-    override fun getGameInstance(): Any {
-        return ""
+    override fun getGameInstance(): Any? {
+        return null
     }
 
     override fun getGameDir(): Path {
-        return baseDir.toPath()
+        TODO("Not yet implemented")
     }
 
     override fun getGameDirectory(): File {
-        return baseDir
+        TODO("Not yet implemented")
     }
 
     override fun getConfigDir(): Path {
-        return configDirectory.toPath()
+        TODO("Not yet implemented")
     }
 
     override fun getConfigDirectory(): File {
-        return baseDir.resolve("config")
+        TODO("Not yet implemented")
     }
 
     override fun getLaunchArguments(sanitize: Boolean): Array<String> {
-        return emptyArray()
+        return arrayOf()
     }
+
 }

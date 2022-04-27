@@ -19,6 +19,9 @@ fun ModMetadata.getUpdateProvider(): Map<String, String> {
         }
         providers[it.key] = it.value.asString
     }
+    if (providers.isEmpty()) {
+        providers["modrinth"] = ""
+    }
     return providers
 }
 

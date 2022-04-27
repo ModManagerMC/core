@@ -5,7 +5,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.modmanagermc.core.Core
-import net.modmanagermc.core.config.Config
 import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.exceptions.ModManagerException
 import net.modmanagermc.core.exceptions.NoHashException
@@ -19,11 +18,13 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 
-class Modrinth(di: DI) : IProvider {
+class Modrinth(private val di: DI) : IProvider {
 
     override val name: String = "modrinth"
-    private val config: Config by di
     private val client = HttpClients.createDefault()
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     /**
      * Uses the following url: https://api.modrinth.com/v2/version_file/{hash}/update?algorithm={algorithm}
@@ -45,18 +46,18 @@ class Modrinth(di: DI) : IProvider {
             Json.encodeToString(
                 UpdateRequest(
                     listOf("fabric"),
-                    listOf(Core.minecraftVersion)
+                    listOf(Core.getMinecraftVersion(di))
                 )
             )
         )
 
         val response = client.execute(request)
         if (response.statusLine.statusCode != 200) {
-            val error = Json.decodeFromStream<ErrorResponse>(response.entity.content)
+            val error = json.decodeFromStream<ErrorResponse>(response.entity.content)
             throw error.toException("Received invalid status code ${response.statusLine.statusCode}. Message: %s")
         }
         val updateResponse = try {
-            Json.decodeFromStream<ModrinthVersion>(response.entity.content)
+            json.decodeFromStream<ModrinthVersion>(response.entity.content)
         } catch (e: Exception) {
             e.printStackTrace()
             return emptyList()

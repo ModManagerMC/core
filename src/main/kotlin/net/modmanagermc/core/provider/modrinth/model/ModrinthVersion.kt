@@ -77,8 +77,7 @@ data class ModrinthVersion(
     @Serializable
     data class Asset(
         val url: String,
-        @SerialName("file_name")
-        val fileName: String,
+        val filename: String,
         val hashes: Map<String, String>
     )
 }
