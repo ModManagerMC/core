@@ -1,13 +1,14 @@
 package net.modmanagermc.core.config
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import net.modmanagermc.core.config.Config.UpdateChannel
+import net.modmanagermc.core.config.Config.UpdateChannel.*
 import java.io.FileNotFoundException
-import java.nio.file.NoSuchFileException
 import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Paths
 
 /**

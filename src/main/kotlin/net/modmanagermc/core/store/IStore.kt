@@ -6,5 +6,4 @@ package net.modmanagermc.core.store
  * @since Core 1.0.0
  * @author DeathsGun
  */
-interface IStore {
-}
+interface IStore

@@ -2,7 +2,6 @@ package net.modmanagermc.core.extensions
 
 import net.fabricmc.loader.api.metadata.ModMetadata
 import net.fabricmc.loader.impl.metadata.ModMetadataParser
-import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.security.MessageDigest
 import java.util.jar.JarFile

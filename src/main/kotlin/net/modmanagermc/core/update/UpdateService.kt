@@ -4,7 +4,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
 import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.mod.IModService
 import net.modmanagermc.core.model.JarFileInfo

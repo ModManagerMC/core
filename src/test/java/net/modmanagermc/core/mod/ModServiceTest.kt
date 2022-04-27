@@ -12,7 +12,7 @@ internal class ModServiceTest {
         bind<FabricLoader> { DummyFabricLoader(mutableListOf()) }
         bind<IModService> { ModService(this) }
     }
-    private val modService: IModService by di;
+    private val modService: IModService by di
 
     @Test
     fun getVersions() {

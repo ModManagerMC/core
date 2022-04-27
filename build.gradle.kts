@@ -1,3 +1,5 @@
+@file:Suppress("GradlePackageVersionRange")
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
