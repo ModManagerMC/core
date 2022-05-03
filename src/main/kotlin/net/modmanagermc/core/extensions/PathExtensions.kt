@@ -9,14 +9,14 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.isDirectory
 import kotlin.io.path.readBytes
 
-val hashes = listOf("SHA-1", "SHA-256", "MD5")
+val hashes = listOf("SHA-1", "SHA-512", "MD5")
 
 /**
  * Opens the file as a JAR and reads the fabric.mod.json from it
  * @return [ModMetadata] if not found or else null
  *
  * @author DeathsGun
- * @since Core 1.0.0
+ * @since 1.0.0
  */
 fun Path.readMetadata(): ModMetadata? {
     try {
@@ -34,7 +34,7 @@ fun Path.readMetadata(): ModMetadata? {
  * Hashes the file using the algorithms declared in [hashes].
  *
  * @author DeathsGun
- * @since Core 1.0.0
+ * @since 1.0.0
  * @return A map of the hashes or if the path is a directory an empty map
  */
 fun Path.generateHashes(): Map<String, String> {

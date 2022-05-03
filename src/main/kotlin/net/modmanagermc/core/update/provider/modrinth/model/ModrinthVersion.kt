@@ -1,8 +1,7 @@
-package net.modmanagermc.core.provider.modrinth.model
+package net.modmanagermc.core.update.provider.modrinth.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.modmanagermc.core.model.Version
 
 /*
 {
@@ -57,19 +56,18 @@ data class ModrinthVersion(
     val gameVersions: List<String>,
     @SerialName("version_type")
     val versionType: String,
+    @SerialName("project_id")
+    val projectId: String,
     val loaders: List<String>,
     val files: List<Asset>
 ) {
-    fun toVersion(): Version {
-        return Version(id)
-    }
 
     @Serializable
     data class Dependency(
         @SerialName("version_id")
-        val versionId: String,
+        val versionId: String?,
         @SerialName("project_id")
-        val projectId: String,
+        val projectId: String?,
         @SerialName("dependency_type")
         val dependencyType: String
     )

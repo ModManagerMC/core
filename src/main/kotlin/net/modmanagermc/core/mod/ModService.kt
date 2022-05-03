@@ -7,16 +7,16 @@ import net.modmanagermc.core.extensions.generateHashes
 import net.modmanagermc.core.extensions.getUpdateProvider
 import net.modmanagermc.core.model.JarFileInfo
 import net.modmanagermc.core.model.Version
-import net.modmanagermc.core.provider.IProvider
-import net.modmanagermc.core.provider.modrinth.Modrinth
+import net.modmanagermc.core.update.IUpdateProvider
+import net.modmanagermc.core.update.provider.modrinth.Modrinth
 import org.apache.logging.log4j.LogManager
 
 class ModService(di: DI) : IModService {
 
     private val fabricLoader: FabricLoader by di
     private val logger = LogManager.getLogger(ModService::class.java)
-    private val providerList: MutableList<IProvider> = mutableListOf(Modrinth(di))
-    override val providers: List<IProvider> get() = providerList
+    private val providerList: MutableList<IUpdateProvider> = mutableListOf(Modrinth(di))
+    override val providers: List<IUpdateProvider> get() = providerList
     private val discoveryService: IModDiscoveryService by di
 
     override suspend fun createJarFileInfo(): List<JarFileInfo> {
@@ -60,7 +60,7 @@ class ModService(di: DI) : IModService {
         return versions
     }
 
-    override fun registerProvider(provider: IProvider) {
+    override fun registerProvider(provider: IUpdateProvider) {
         logger.debug("Registering provider ${provider.name}")
         this.providerList.add(provider)
     }

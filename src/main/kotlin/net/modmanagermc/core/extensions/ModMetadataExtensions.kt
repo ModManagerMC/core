@@ -6,7 +6,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata
  * Extracts the update provider from `modmanager` custom space in `fabric.mod.json`
  *
  * @author DeathsGun
- * @since Core 1.0.0
+ * @since 1.0.0
  */
 fun ModMetadata.getUpdateProvider(): Map<String, String> {
     val providers = mutableMapOf<String, String>()
@@ -29,7 +29,7 @@ fun ModMetadata.getUpdateProvider(): Map<String, String> {
  * Checks for the disable-checking in `modmanager` custom space in `fabric.mod.json`
  *
  * @author DeathsGun
- * @since Core 1.0.0
+ * @since 1.0.0
  */
 fun ModMetadata.updatesDisabled(): Boolean {
     if (!this.containsCustomValue("modmanager")) {

@@ -13,7 +13,7 @@ import kotlin.io.path.extension
  * Implementation of [IModDiscoveryService]
  *
  * @author DeathsGun
- * @since Core 1.0.0
+ * @since 1.0.0
  */
 class ModDiscoveryService(di: DI) : IModDiscoveryService {
 

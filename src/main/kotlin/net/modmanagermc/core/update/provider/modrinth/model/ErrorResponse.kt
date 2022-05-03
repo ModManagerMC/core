@@ -1,4 +1,4 @@
-package net.modmanagermc.core.provider.modrinth.model
+package net.modmanagermc.core.update.provider.modrinth.model
 
 import kotlinx.serialization.Serializable
 import net.modmanagermc.core.exceptions.ModManagerException

@@ -13,7 +13,7 @@ import net.modmanagermc.core.update.UpdateService
 /**
  * Initializer for ModManager Core
  *
- * @since Core 1.0.0
+ * @since 1.0.0
  * @author DeathsGun
  */
 object Core {
@@ -23,18 +23,24 @@ object Core {
         return loader.getModContainer("minecraft").get().metadata.version.friendlyString
     }
 
-    private lateinit var _di: DI
+    private var initialized = false
+    private lateinit var dependencyInjection: DI
+
     @JvmStatic
-    val di: DI get() = _di
+    val di: DI get() = dependencyInjection
 
     fun init() {
-        _di = DI {
+        if (initialized) {
+            throw RuntimeException("ModManager core is already initialized!")
+        }
+        dependencyInjection = DI {
             bind<Config> { Config.loadConfig() }
             bind<IModDiscoveryService> { ModDiscoveryService(this) }
             bind<IModService> { ModService(this) }
             bind<IUpdateService> { UpdateService(this) }
             bind<FabricLoader> { FabricLoader.getInstance() }
         }
+        initialized = true
     }
 
 }

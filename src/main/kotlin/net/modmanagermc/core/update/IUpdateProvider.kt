@@ -1,4 +1,4 @@
-package net.modmanagermc.core.provider
+package net.modmanagermc.core.update
 
 import net.modmanagermc.core.model.JarFileInfo
 import net.modmanagermc.core.model.Version
@@ -6,10 +6,10 @@ import net.modmanagermc.core.model.Version
 /**
  * Provides versions for a mod by using [JarFileInfo]
  *
- * @since Core 1.0.0
+ * @since 1.0.0
  * @author DeathsGun
  */
-interface IProvider {
+interface IUpdateProvider {
 
     val name: String
 

@@ -6,7 +6,7 @@ import net.modmanagermc.core.model.ProcessingStatus
  * Processes the installed mods and sends them to
  * the ModManager backend.
  *
- * @since Core 1.0.0
+ * @since 1.0.0
  * @author DeathsGun
  */
 interface IUpdateService {

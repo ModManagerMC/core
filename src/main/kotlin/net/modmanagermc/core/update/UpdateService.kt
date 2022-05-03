@@ -16,6 +16,7 @@ class UpdateService(di: DI) : IUpdateService {
     private val modService: IModService by di
     private val logger = LogManager.getLogger(UpdateService::class.java)
     private var status: ProcessingStatus = ProcessingStatus.PENDING
+    private val updates: MutableList<Update> = mutableListOf()
 
     override val processingStatus: ProcessingStatus
         get() {
@@ -47,6 +48,9 @@ class UpdateService(di: DI) : IUpdateService {
             logger.info("No updates found")
             return
         }
+        val update = Update(fileInfo.modId, versions[0])
+        logger.info("Update for {} ({} -> {}) found", fileInfo.modId, fileInfo.version, update.version)
+        updates.add(update)
     }
 
 }

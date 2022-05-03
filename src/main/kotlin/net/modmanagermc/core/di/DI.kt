@@ -7,7 +7,7 @@ import kotlin.reflect.KProperty
  * Because we can't use things like Kodein-DI.
  *
  * @author DeathsGun
- * @since Core 1.0.0
+ * @since 1.0.0
  */
 //TODO: Move to own repo
 @Deprecated("This will be moved to a own repo in a future version")

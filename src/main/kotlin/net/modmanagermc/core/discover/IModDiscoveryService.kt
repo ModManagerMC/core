@@ -9,7 +9,7 @@ import java.nio.file.Path
  *
  * @author DeathsGun
  * @see ModDiscoveryService
- * @since Core 1.0.0
+ * @since 1.0.0
  */
 interface IModDiscoveryService {
 
