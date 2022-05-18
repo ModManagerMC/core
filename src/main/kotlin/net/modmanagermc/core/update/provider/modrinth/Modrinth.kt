@@ -17,8 +17,10 @@ import net.modmanagermc.core.update.provider.modrinth.model.ModrinthVersion
 import net.modmanagermc.core.update.provider.modrinth.model.UpdateRequest
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
+import org.apache.http.client.utils.URIBuilder
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
+import java.net.URI
 
 /**
  * Modrinth Provider
@@ -38,7 +40,7 @@ class Modrinth(private val di: DI) : IUpdateProvider {
      */
     @OptIn(ExperimentalSerializationApi::class)
     @Throws(ModManagerException::class)
-    override fun getVersions(fileInfo: JarFileInfo): List<Version> {
+    override fun getVersion(fileInfo: JarFileInfo): Version? {
         val hash = fileInfo.hashes["SHA-512"] ?: fileInfo.hashes["SHA-1"]
         ?: throw NoHashException("No SHA-512 or SHA-1 for ${fileInfo.modId}")
 
@@ -65,21 +67,41 @@ class Modrinth(private val di: DI) : IUpdateProvider {
             json.decodeFromStream<ModrinthVersion>(response.entity.content)
         } catch (e: Exception) {
             e.printStackTrace()
-            return emptyList()
+            return null
         }
 
-        val asset = updateResponse.files.firstOrNull() ?: return emptyList()
-
-        return listOf(
-            Version(
-                updateResponse.id,
-                updateResponse.projectId,
-                updateResponse.dependencies.mapNotNull { toDependency(it) },
-                asset.filename,
-                asset.url,
-                asset.hashes,
-            )
+        val asset = updateResponse.files.firstOrNull() ?: return null
+        return Version(
+            updateResponse.id,
+            updateResponse.projectId,
+            updateResponse.version,
+            updateResponse.dependencies.mapNotNull { toDependency(it) },
+            asset.filename,
+            asset.url,
+            asset.hashes,
         )
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun getVersions(projectId: String): List<ModrinthVersion> {
+        val uri = URIBuilder("https://api.modrinth.com/v2/project/${projectId}/version")
+            .addParameter("loaders", "[\"fabric\"]")
+            .addParameter("game_versions", "[\"${Core.getMinecraftVersion(di)}\"]")
+            .build()
+        val request = HttpGet(uri)
+
+        request.setHeader("Accept", "application/json")
+        val response = client.execute(request)
+        if (response.statusLine.statusCode != 200) {
+            val error = json.decodeFromStream<ErrorResponse>(response.entity.content)
+            throw error.toException("Received invalid status code ${response.statusLine.statusCode}. Message: %s")
+        }
+        return try {
+            json.decodeFromStream(response.entity.content)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -106,7 +128,14 @@ class Modrinth(private val di: DI) : IUpdateProvider {
             return null // Currently, only direct versions supported
         }
         try {
-            val version = getVersion(dep.versionId) ?: return null
+            var version = getVersion(dep.versionId) ?: return null
+            if (!version.gameVersions.contains(Core.getMinecraftVersion(di))) {
+                val versions = getVersions(version.projectId)
+                if (versions.isEmpty()) {
+                    return null // Can't be installed due to having no compatible version
+                }
+                version = versions.firstOrNull() ?: return null
+            }
             val asset = version.files.firstOrNull() ?: return null
             return Dependency(
                 asset.url,

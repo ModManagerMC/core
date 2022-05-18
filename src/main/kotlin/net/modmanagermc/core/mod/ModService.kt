@@ -10,6 +10,8 @@ import net.modmanagermc.core.model.Version
 import net.modmanagermc.core.update.IUpdateProvider
 import net.modmanagermc.core.update.provider.modrinth.Modrinth
 import org.apache.logging.log4j.LogManager
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ModService(di: DI) : IModService {
 
@@ -43,7 +45,7 @@ class ModService(di: DI) : IModService {
                 )
             )
         }
-        logger.info("Processed {} mods {} can be used", modInfos.size, mods.size)
+        logger.info("Processed {} mods {} can be used", mods.size, modInfos.size)
         return modInfos
     }
 
@@ -55,7 +57,11 @@ class ModService(di: DI) : IModService {
                 logger.warn("Mod ${fileInfo.modId} requested provider $providerName but it's not available")
                 continue
             }
-            versions.addAll(provider.getVersions(fileInfo))
+            val version = provider.getVersion(fileInfo) ?: continue
+            if (Objects.equals(version.hashes["sha512"], fileInfo.hashes["SHA-512"])) {
+                continue
+            }
+            versions.add(version);
         }
         return versions
     }

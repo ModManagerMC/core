@@ -15,6 +15,7 @@ data class Version(
      * Provider specific id for the mod
      */
     val providerModId: String,
+    val version: String,
     /**
      * A list of dependencies for the mod
      */

@@ -11,6 +11,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata
 fun ModMetadata.getUpdateProvider(): Map<String, String> {
     val providers = mutableMapOf<String, String>()
     if (!containsCustomValue("modmanager")) {
+        providers["modrinth"] = ""
         return providers
     }
     getCustomValue("modmanager").asObject.forEach {

@@ -45,11 +45,11 @@ class UpdateService(di: DI) : IUpdateService {
     private fun checkUpdate(fileInfo: JarFileInfo) {
         val versions = modService.getNewerVersions(fileInfo)
         if (versions.isEmpty()) {
-            logger.info("No updates found")
+            logger.info("No updates for {} found", fileInfo.modId)
             return
         }
         val update = Update(fileInfo.modId, versions[0])
-        logger.info("Update for {} ({} -> {}) found", fileInfo.modId, fileInfo.version, update.version)
+        logger.info("Update for {} ({} -> {}) found", fileInfo.modId, fileInfo.version, update.version.version)
         updates.add(update)
     }
 

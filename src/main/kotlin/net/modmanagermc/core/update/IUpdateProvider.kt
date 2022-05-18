@@ -13,6 +13,6 @@ interface IUpdateProvider {
 
     val name: String
 
-    fun getVersions(fileInfo: JarFileInfo): List<Version>
+    fun getVersion(fileInfo: JarFileInfo): Version?
 
 }
