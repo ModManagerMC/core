@@ -22,7 +22,7 @@ import java.nio.file.Paths
  */
 @Serializable
 data class Config(
-    var updateChannel: UpdateChannel = UpdateChannel.ALL,
+    var updateChannel: UpdateChannel = ALL,
     var hidden: ArrayList<String> = ArrayList()
 ) {
 
