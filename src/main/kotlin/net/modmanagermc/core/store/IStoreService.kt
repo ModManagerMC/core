@@ -3,18 +3,11 @@ package net.modmanagermc.core.store
 import net.modmanagermc.core.model.Category
 import net.modmanagermc.core.model.Mod
 
-/**
- * Provides info about categories and mods
- *
- * @since 1.0.0
- * @author DeathsGun
- */
-interface IStore {
+interface IStoreService {
 
-    val name: String
+    var store: String
+    val categories: List<Category>
 
     fun search(query: String, categories: List<Category>, page: Int, limit: Int): List<Mod>
-
-    fun getCategories(): List<Category>
 
 }

@@ -7,7 +7,6 @@ import kotlinx.serialization.json.decodeFromStream
 import net.modmanagermc.core.Core
 import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.exceptions.ModManagerException
-import net.modmanagermc.core.exceptions.NoHashException
 import net.modmanagermc.core.model.Dependency
 import net.modmanagermc.core.model.JarFileInfo
 import net.modmanagermc.core.model.Version
@@ -20,7 +19,6 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.utils.URIBuilder
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
-import java.net.URI
 
 /**
  * Modrinth Provider
@@ -36,13 +34,13 @@ class Modrinth(private val di: DI) : IUpdateProvider {
     /**
      * Uses the following url: https://api.modrinth.com/v2/version_file/{hash}/update?algorithm={algorithm}
      *
-     * @throws NoHashException if no SHA-512 or SHA-1 is provided
+     * @throws ModManagerException if no SHA-512 or SHA-1 is provided
      */
     @OptIn(ExperimentalSerializationApi::class)
     @Throws(ModManagerException::class)
     override fun getVersion(fileInfo: JarFileInfo): Version? {
         val hash = fileInfo.hashes["SHA-512"] ?: fileInfo.hashes["SHA-1"]
-        ?: throw NoHashException("No SHA-512 or SHA-1 for ${fileInfo.modId}")
+        ?: throw ModManagerException("modmanager.error.hash", fileInfo.modId)
 
         val algorithm = if (fileInfo.hashes.containsKey("SHA-512")) "sha512" else "sha1"
 
@@ -107,7 +105,7 @@ class Modrinth(private val di: DI) : IUpdateProvider {
     @OptIn(ExperimentalSerializationApi::class)
     private fun getVersion(id: String): ModrinthVersion? {
         val request = HttpGet("https://api.modrinth.com/v2/version/${id}")
-        request.setHeader("Accept", "application/json")
+        request.addHeader("Accept", "application/json")
 
         val response = client.execute(request)
         if (response.statusLine.statusCode != 200) {

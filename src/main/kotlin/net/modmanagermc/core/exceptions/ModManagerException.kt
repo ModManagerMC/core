@@ -1,3 +1,3 @@
 package net.modmanagermc.core.exceptions
 
-open class ModManagerException(override val message: String?) : Exception(message)
+open class ModManagerException(val translationId: String, vararg args: Any) : Exception()

@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ModService(di: DI) : IModService {
+internal class ModService(di: DI) : IModService {
 
     private val fabricLoader: FabricLoader by di
     private val logger = LogManager.getLogger(ModService::class.java)

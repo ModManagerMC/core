@@ -11,7 +11,7 @@ import net.modmanagermc.core.model.ProcessingStatus
 import org.apache.logging.log4j.LogManager
 
 @OptIn(DelicateCoroutinesApi::class)
-class UpdateService(di: DI) : IUpdateService {
+internal class UpdateService(di: DI) : IUpdateService {
 
     private val modService: IModService by di
     private val logger = LogManager.getLogger(UpdateService::class.java)

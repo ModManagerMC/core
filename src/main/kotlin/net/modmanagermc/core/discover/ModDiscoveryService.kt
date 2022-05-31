@@ -15,7 +15,7 @@ import kotlin.io.path.extension
  * @author DeathsGun
  * @since 1.0.0
  */
-class ModDiscoveryService(di: DI) : IModDiscoveryService {
+internal class ModDiscoveryService(di: DI) : IModDiscoveryService {
 
     private val fabricLoader: FabricLoader by di
     private val blocked = listOf("minecraft", "java")

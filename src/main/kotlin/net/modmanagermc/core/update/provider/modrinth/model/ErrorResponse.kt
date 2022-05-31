@@ -2,7 +2,6 @@ package net.modmanagermc.core.update.provider.modrinth.model
 
 import kotlinx.serialization.Serializable
 import net.modmanagermc.core.exceptions.ModManagerException
-import net.modmanagermc.core.exceptions.NotFoundException
 
 @Serializable
 data class ErrorResponse(
@@ -12,7 +11,7 @@ data class ErrorResponse(
 
     fun toException(message: String): ModManagerException {
         return when (error) {
-            "not_found" -> NotFoundException(String.format(message, description))
+            "not_found" -> ModManagerException(String.format(message, description))
             else -> ModManagerException(String.format(message, description ?: "no detailed error message provided"))
         }
     }
