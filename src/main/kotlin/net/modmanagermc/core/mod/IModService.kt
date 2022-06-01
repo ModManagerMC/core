@@ -18,4 +18,6 @@ interface IModService {
 
     fun registerProvider(provider: IUpdateProvider)
 
+    fun getModState(modId: String): State
+
 }

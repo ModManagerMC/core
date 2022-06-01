@@ -12,6 +12,7 @@ import net.modmanagermc.core.store.provider.modrinth.models.SearchResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.utils.URIBuilder
 import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
 
 @OptIn(ExperimentalSerializationApi::class)
 class Modrinth : IStore {
@@ -37,10 +38,12 @@ class Modrinth : IStore {
         val response = client.execute(request)
 
         if (response.statusLine.statusCode != 200) {
+            EntityUtils.consume(response.entity)
             throw ModManagerException("modmanager.error.status", response.statusLine.statusCode)
         }
 
         val searchResponse = json.decodeFromStream<SearchResponse>(response.entity.content)
+        EntityUtils.consume(response.entity)
         return searchResponse.hits.map { it.toMod() }
     }
 
@@ -58,10 +61,12 @@ class Modrinth : IStore {
         request.addHeader("Accept", "application/json")
         val response = client.execute(request)
         if (response.statusLine.statusCode != 200) {
+            EntityUtils.consume(response.entity)
             throw ModManagerException("modmanager.error.status", response.statusLine.statusCode)
         }
         val categories =
             json.decodeFromStream<List<net.modmanagermc.core.store.provider.modrinth.models.Category>>(response.entity.content)
+        EntityUtils.consume(response.entity)
         return categories.filter { it.projectType == "mod" }.map { it.toCategory() }
     }
 

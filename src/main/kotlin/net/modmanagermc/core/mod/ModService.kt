@@ -20,6 +20,7 @@ internal class ModService(di: DI) : IModService {
     private val providerList: MutableList<IUpdateProvider> = mutableListOf(Modrinth(di))
     override val providers: List<IUpdateProvider> get() = providerList
     private val discoveryService: IModDiscoveryService by di
+    private val modStates = mutableMapOf<String, State>()
 
     override suspend fun createJarFileInfo(): List<JarFileInfo> {
         val mods = discoveryService.getMods()
@@ -59,8 +60,12 @@ internal class ModService(di: DI) : IModService {
             }
             val version = provider.getVersion(fileInfo) ?: continue
             if (Objects.equals(version.hashes["sha512"], fileInfo.hashes["SHA-512"])) {
+                modStates[version.providerModId] = State.INSTALLED
+                modStates[fileInfo.modId] = State.INSTALLED
                 continue
             }
+            modStates[version.providerModId] = State.OUTDATED
+            modStates[fileInfo.modId] = State.OUTDATED
             versions.add(version);
         }
         return versions
@@ -69,5 +74,9 @@ internal class ModService(di: DI) : IModService {
     override fun registerProvider(provider: IUpdateProvider) {
         logger.debug("Registering provider ${provider.name}")
         this.providerList.add(provider)
+    }
+
+    override fun getModState(modId: String): State {
+        return modStates.getOrDefault(modId, State.DOWNLOADABLE)
     }
 }

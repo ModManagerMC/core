@@ -20,7 +20,7 @@ data class SearchResponse(
         val license: String
     ) {
         fun toMod(): net.modmanagermc.core.model.Mod {
-            return net.modmanagermc.core.model.Mod(projectId)
+            return net.modmanagermc.core.model.Mod(projectId, title, iconUrl, description)
         }
     }
 }

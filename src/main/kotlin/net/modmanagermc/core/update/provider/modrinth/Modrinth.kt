@@ -19,6 +19,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.utils.URIBuilder
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
 
 /**
  * Modrinth Provider
@@ -59,14 +60,17 @@ class Modrinth(private val di: DI) : IUpdateProvider {
         val response = client.execute(request)
         if (response.statusLine.statusCode != 200) {
             val error = json.decodeFromStream<ErrorResponse>(response.entity.content)
+            EntityUtils.consume(response.entity)
             throw error.toException("Received invalid status code ${response.statusLine.statusCode}. Message: %s")
         }
         val updateResponse = try {
             json.decodeFromStream<ModrinthVersion>(response.entity.content)
         } catch (e: Exception) {
+            EntityUtils.consume(response.entity)
             e.printStackTrace()
             return null
         }
+        EntityUtils.consume(response.entity)
 
         val asset = updateResponse.files.firstOrNull() ?: return null
         return Version(

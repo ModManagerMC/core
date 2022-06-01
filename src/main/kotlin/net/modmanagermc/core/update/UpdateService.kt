@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager
 internal class UpdateService(di: DI) : IUpdateService {
 
     private val modService: IModService by di
-    private val logger = LogManager.getLogger(UpdateService::class.java)
+    private val logger = LogManager.getLogger("ModManager|UpdateService")
     private var status: ProcessingStatus = ProcessingStatus.PENDING
     private val updates: MutableList<Update> = mutableListOf()
 

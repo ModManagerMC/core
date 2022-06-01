@@ -26,9 +26,9 @@ dependencies {
     api("net.fabricmc:fabric-language-kotlin:${fabricKotlinVersion}")
     api("net.fabricmc:fabric-loader:$loaderVersion")
     api("org.apache.httpcomponents:httpclient:4.5.13")
-    api("org.apache.logging.log4j:log4j-api:2.17.2")
+    api("org.apache.logging.log4j:log4j-api:2.17.1")
 
-    testImplementation("org.apache.logging.log4j:log4j-core:2.17.2")
+    testImplementation("org.apache.logging.log4j:log4j-core:2.17.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
 

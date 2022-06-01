@@ -8,15 +8,17 @@ import net.modmanagermc.core.Core
 import net.modmanagermc.core.model.Category
 import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.store.IStoreService
+import kotlin.reflect.KFunction
 
 @OptIn(DelicateCoroutinesApi::class)
-class ModListController {
+class ModListController(private val view: View) {
 
     private val limit = 20
     private val storeService: IStoreService by Core.di
     private var page = 0
     var query: String = ""
     var nextPageAvailable = true
+    var previousPageAvailable = false
     var selectedCategories: List<Category> = emptyList()
     var mods: List<Mod> = emptyList()
     var categories: List<Category> = emptyList()
@@ -26,9 +28,11 @@ class ModListController {
         search()
     }
 
-    fun search() = GlobalScope.launch(Dispatchers.IO) {
+    fun search() = GlobalScope.launch(Dispatchers.Default) {
         mods = storeService.search(query, selectedCategories, page, limit)
         nextPageAvailable = mods.size >= limit
+        previousPageAvailable = page != 0
+        view.setMods(mods)
     }
 
     fun tick() {
@@ -48,6 +52,12 @@ class ModListController {
     fun nextPage() {
         page++
         search()
+    }
+
+    interface View {
+
+       fun setMods(mods: List<Mod>)
+
     }
 
 }
