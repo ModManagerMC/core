@@ -26,12 +26,12 @@ internal class StoreService : IStoreService {
             return cate
         }
 
-    override fun search(query: String, categories: List<Category>, page: Int, limit: Int): List<Mod> {
+    override fun search(query: String, categories: List<Category>, sort: Sort, page: Int, limit: Int): List<Mod> {
         val store = getStore() ?: return emptyList()
-        val id = searchId(query, categories, page, limit)
+        val id = searchId(query, categories, sort, page, limit)
         var mods = modCache.getOrDefault(id, emptyList())
         if (mods.isEmpty()) {
-            mods = store.search(query, categories, page, limit)
+            mods = store.search(query, categories, sort, page, limit)
             modCache[id] = mods
         }
         return mods
@@ -41,8 +41,8 @@ internal class StoreService : IStoreService {
         return stores.find { it.name == store }
     }
 
-    private fun searchId(query: String, categories: List<Category>, page: Int, limit: Int): String {
-        return "${query}|${categories.joinToString(".")}|${page}|${limit}"
+    private fun searchId(query: String, categories: List<Category>, sort: Sort, page: Int, limit: Int): String {
+        return "${query}|${categories.joinToString(".")}|${sort}|${page}|${limit}"
     }
 
 }

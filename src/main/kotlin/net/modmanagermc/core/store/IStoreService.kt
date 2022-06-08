@@ -8,6 +8,12 @@ interface IStoreService {
     var store: String
     val categories: List<Category>
 
-    fun search(query: String, categories: List<Category>, page: Int, limit: Int): List<Mod>
+    fun search(
+        query: String,
+        categories: List<Category> = emptyList(),
+        sort: Sort,
+        page: Int,
+        limit: Int
+    ): List<Mod>
 
 }

@@ -8,6 +8,7 @@ import net.modmanagermc.core.exceptions.ModManagerException
 import net.modmanagermc.core.model.Category
 import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.store.IStore
+import net.modmanagermc.core.store.Sort
 import net.modmanagermc.core.store.provider.modrinth.models.SearchResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.utils.URIBuilder
@@ -25,12 +26,12 @@ class Modrinth : IStore {
 
     override val name: String = "modrinth"
 
-    override fun search(query: String, categories: List<Category>, page: Int, limit: Int): List<Mod> {
-
+    override fun search(query: String, categories: List<Category>, sort: Sort, page: Int, limit: Int): List<Mod> {
         val uri = URIBuilder("${uri}/search").apply {
             addParameter("query", query)
             addParameter("offset", "${page * limit}")
             addParameter("limit", "$limit")
+            addParameter("index", sort.toModrinth())
             addParameter("facets", buildFacets(categories))
         }
         val request = HttpGet(uri.build())
@@ -70,5 +71,8 @@ class Modrinth : IStore {
         return categories.filter { it.projectType == "mod" }.map { it.toCategory() }
     }
 
+    private fun Sort.toModrinth(): String {
+        return name.lowercase()
+    }
 
 }

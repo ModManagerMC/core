@@ -13,7 +13,13 @@ interface IStore {
 
     val name: String
 
-    fun search(query: String, categories: List<Category>, page: Int, limit: Int): List<Mod>
+    fun search(
+        query: String,
+        categories: List<Category> = emptyList(),
+        sort: Sort,
+        page: Int,
+        limit: Int
+    ): List<Mod>
 
     fun getCategories(): List<Category>
 

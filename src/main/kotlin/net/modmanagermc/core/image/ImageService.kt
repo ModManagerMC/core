@@ -10,14 +10,15 @@ import org.apache.logging.log4j.LogManager
 import java.io.InputStream
 import java.nio.file.Files
 import java.security.MessageDigest
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(DelicateCoroutinesApi::class)
 internal class ImageService(di: DI) : IImageService {
 
     private val logger = LogManager.getLogger("ModManager|ImageService")
     private val fabricLoader: FabricLoader by di
-    private val imagePath = fabricLoader.configDir.resolve("modmanager").resolve("icons")
-    private val states: MutableMap<String, ImageState> = mutableMapOf()
+    private val imagePath = fabricLoader.configDir.resolve("modmanager").resolve("images")
+    private val states: ConcurrentHashMap<String, ImageState> = ConcurrentHashMap()
     private val client = HttpClients.createDefault()
 
     init {
