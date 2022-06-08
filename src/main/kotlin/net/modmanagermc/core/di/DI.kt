@@ -10,7 +10,6 @@ import kotlin.reflect.KProperty
  * @since 1.0.0
  */
 //TODO: Move to own repo
-@Deprecated("This will be moved to a own repo in a future version")
 class DI(init: DI.(DI) -> Unit) {
 
     val instances = mutableMapOf<String, Any>()

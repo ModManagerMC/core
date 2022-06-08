@@ -43,6 +43,7 @@ val sourcesJar by tasks.registering(Jar::class) {
 
 tasks {
     test {
+        File("run").mkdirs()
         workingDir("run")
     }
     processResources {
