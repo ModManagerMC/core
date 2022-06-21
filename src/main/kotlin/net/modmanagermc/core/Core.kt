@@ -5,8 +5,6 @@ import net.modmanagermc.core.config.Config
 import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.discover.IModDiscoveryService
 import net.modmanagermc.core.discover.ModDiscoveryService
-import net.modmanagermc.core.image.IImageService
-import net.modmanagermc.core.image.ImageService
 import net.modmanagermc.core.mod.IModService
 import net.modmanagermc.core.mod.ModService
 import net.modmanagermc.core.store.IStoreService
@@ -44,7 +42,6 @@ object Core {
             bind<IUpdateService> { UpdateService(this) }
             bind<FabricLoader> { FabricLoader.getInstance() }
             bind<IStoreService> { StoreService() }
-            bind<IImageService> { ImageService(this) }
         }
         initialized = true
     }
