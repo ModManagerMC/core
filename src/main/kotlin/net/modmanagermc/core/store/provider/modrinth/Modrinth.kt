@@ -9,6 +9,7 @@ import net.modmanagermc.core.model.Category
 import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.store.IStore
 import net.modmanagermc.core.store.Sort
+import net.modmanagermc.core.store.provider.modrinth.models.DetailedMod
 import net.modmanagermc.core.store.provider.modrinth.models.SearchResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.utils.URIBuilder
@@ -69,6 +70,19 @@ class Modrinth : IStore {
             json.decodeFromStream<List<net.modmanagermc.core.store.provider.modrinth.models.Category>>(response.entity.content)
         EntityUtils.consume(response.entity)
         return categories.filter { it.projectType == "mod" }.map { it.toCategory() }
+    }
+
+    override fun getMod(mod: Mod): Mod {
+        val request = HttpGet("${uri}/project/${mod.id}")
+        request.addHeader("Accept", "application/json")
+        val response = client.execute(request)
+        if (response.statusLine.statusCode != 200) {
+            EntityUtils.consume(response.entity)
+            throw ModManagerException("modmanager.error.status", response.statusLine.statusCode)
+        }
+        val detailedMod = json.decodeFromStream<DetailedMod>(response.entity.content)
+        EntityUtils.consume(response.entity)
+        return detailedMod.toMod(mod)
     }
 
     private fun Sort.toModrinth(): String {

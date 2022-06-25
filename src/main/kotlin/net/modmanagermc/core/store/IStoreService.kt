@@ -16,4 +16,6 @@ interface IStoreService {
         limit: Int
     ): List<Mod>
 
+    fun getMod(modId: Mod): Mod?
+
 }

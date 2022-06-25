@@ -13,6 +13,7 @@ import net.modmanagermc.core.store.Sort
 @OptIn(DelicateCoroutinesApi::class)
 class ModListController(private val view: View) {
 
+    var scrollAmount: Double = 0.0
     private val limit = 20
     private val storeService: IStoreService by Core.di
     private var page = 0
@@ -23,6 +24,7 @@ class ModListController(private val view: View) {
     var selectedCategories: List<Category> = emptyList()
     var mods: List<Mod> = emptyList()
     var categories: List<Category> = emptyList()
+    var selectedMod: Mod? = null
 
     fun init() = GlobalScope.launch(Dispatchers.IO) {
         categories = storeService.categories
@@ -40,6 +42,7 @@ class ModListController(private val view: View) {
         nextPageAvailable = mods.size >= limit
         previousPageAvailable = page != 0
         view.setMods(mods)
+        view.setScrollAmount(scrollAmount)
     }
 
     fun tick() {
@@ -74,6 +77,7 @@ class ModListController(private val view: View) {
         fun setMods(mods: List<Mod>)
         fun error(e: Exception)
         fun setCategories(categories: List<Category>)
+        fun setScrollAmount(scrollAmount: Double)
 
     }
 

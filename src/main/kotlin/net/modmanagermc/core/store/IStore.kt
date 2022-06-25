@@ -22,5 +22,6 @@ interface IStore {
     ): List<Mod>
 
     fun getCategories(): List<Category>
+    fun getMod(mod: Mod): Mod?
 
 }

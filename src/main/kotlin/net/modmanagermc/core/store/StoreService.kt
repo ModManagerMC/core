@@ -37,6 +37,10 @@ internal class StoreService : IStoreService {
         return mods
     }
 
+    override fun getMod(mod: Mod): Mod? {
+        return getStore()?.getMod(mod)
+    }
+
     private fun getStore(): IStore? {
         return stores.find { it.name == store }
     }

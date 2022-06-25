@@ -2,6 +2,7 @@ package net.modmanagermc.core.store.provider.modrinth.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.modmanagermc.core.model.Category
 
 @Serializable
 data class SearchResponse(
@@ -17,10 +18,23 @@ data class SearchResponse(
         @SerialName("project_id")
         val projectId: String,
         val author: String,
-        val license: String
+        val license: String,
+        val categories: List<String>
     ) {
+
+        private val blacklisted = listOf("fabric", "quilt", "forge")
+
         fun toMod(): net.modmanagermc.core.model.Mod {
-            return net.modmanagermc.core.model.Mod(projectId, title, iconUrl, description)
+            return net.modmanagermc.core.model.Mod(
+                projectId,
+                title,
+                iconUrl,
+                description,
+                author,
+                license,
+                categories.filter { !blacklisted.contains(it) }.map { Category(it, "modmanager.category.$it") },
+                null
+            )
         }
     }
 }
