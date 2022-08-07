@@ -1,7 +1,10 @@
 package net.modmanagermc.core.extensions
 
+import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.metadata.ModMetadata
+import net.fabricmc.loader.impl.metadata.DependencyOverrides
 import net.fabricmc.loader.impl.metadata.ModMetadataParser
+import net.fabricmc.loader.impl.metadata.VersionOverrides
 import java.nio.file.Path
 import java.security.MessageDigest
 import java.util.jar.JarFile
@@ -18,12 +21,18 @@ val hashes = listOf("SHA-1", "SHA-512", "MD5")
  * @author DeathsGun
  * @since 1.0.0
  */
-fun Path.readMetadata(): ModMetadata? {
+fun Path.readMetadata(fabricLoader: FabricLoader): ModMetadata? {
     try {
         val jar = JarFile(this.toFile())
         val entry = jar.getJarEntry("fabric.mod.json") ?: return null
         jar.getInputStream(entry).use {
-            return ModMetadataParser.parseMetadata(it, this.absolutePathString(), emptyList())
+            return ModMetadataParser.parseMetadata(
+                it,
+                this.absolutePathString(),
+                emptyList(),
+                VersionOverrides(),
+                DependencyOverrides(fabricLoader.configDir)
+            )
         }
     } catch (_: Exception) {
     }

@@ -37,7 +37,7 @@ internal class ModDiscoveryService(di: DI) : IModDiscoveryService {
         val files =
             Files.walk(fabricLoader.gameDir.resolve("mods")).filter { "jar".equals(it.extension, true) }
         files.forEach {
-            val metadata = it.readMetadata() ?: return@forEach
+            val metadata = it.readMetadata(fabricLoader) ?: return@forEach
             jars[metadata.id] = it.toFile().absolutePath
         }
         val path = jars[modId] ?: return null
