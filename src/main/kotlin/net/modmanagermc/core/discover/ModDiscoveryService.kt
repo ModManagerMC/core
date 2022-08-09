@@ -30,7 +30,7 @@ internal class ModDiscoveryService(di: DI) : IModDiscoveryService {
             }
     }
 
-    override fun getJar(modId: String): Path? {
+    override fun getJar(fabricLoader: FabricLoader, modId: String): Path? {
         if (jars.containsKey(modId)) {
             return Path.of(jars[modId]!!)
         }

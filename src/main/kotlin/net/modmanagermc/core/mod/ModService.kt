@@ -11,7 +11,6 @@ import net.modmanagermc.core.update.IUpdateProvider
 import net.modmanagermc.core.update.provider.modrinth.Modrinth
 import org.apache.logging.log4j.LogManager
 import java.util.*
-import kotlin.collections.ArrayList
 
 internal class ModService(di: DI) : IModService {
 
@@ -27,7 +26,7 @@ internal class ModService(di: DI) : IModService {
         logger.info("Processing {} mods", mods.size)
         val modInfos = ArrayList<JarFileInfo>()
         for (mod in mods) {
-            val path = discoveryService.getJar(mod.id)
+            val path = discoveryService.getJar(fabricLoader, mod.id)
             if (path == null) {
                 logger.debug(
                     "Skipping update check for {} because it has no jar in {}",

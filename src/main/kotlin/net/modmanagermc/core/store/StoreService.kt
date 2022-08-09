@@ -1,18 +1,24 @@
 package net.modmanagermc.core.store
 
+import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.model.Category
 import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.store.provider.modrinth.Modrinth
 
-internal class StoreService : IStoreService {
+internal class StoreService(di: DI) : IStoreService {
 
     // Store to use
     override var store: String = "modrinth"
 
     // Cache stores
     private val _categories: MutableMap<String, List<Category>> = mutableMapOf()
-    private val stores: MutableList<IStore> = mutableListOf(Modrinth())
+    private val stores: MutableList<IStore> = mutableListOf(Modrinth(di))
     private val modCache: MutableMap<String, List<Mod>> = mutableMapOf()
+    override val licenses: Map<String, String>
+
+    init {
+        licenses = getStore()?.getLicences() ?: emptyMap()
+    }
 
     override val categories: List<Category>
         get() {

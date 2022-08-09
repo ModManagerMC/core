@@ -4,12 +4,15 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.modmanagermc.core.Core
+import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.exceptions.ModManagerException
 import net.modmanagermc.core.model.Category
 import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.store.IStore
+import net.modmanagermc.core.store.IStoreService
 import net.modmanagermc.core.store.Sort
 import net.modmanagermc.core.store.provider.modrinth.models.DetailedMod
+import net.modmanagermc.core.store.provider.modrinth.models.LicenseModel
 import net.modmanagermc.core.store.provider.modrinth.models.SearchResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.utils.URIBuilder
@@ -17,7 +20,7 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
 @OptIn(ExperimentalSerializationApi::class)
-class Modrinth : IStore {
+class Modrinth(val di: DI) : IStore {
 
     private val uri = "https://api.modrinth.com/v2"
     private val client = HttpClients.createDefault()
@@ -37,6 +40,7 @@ class Modrinth : IStore {
         }
         val request = HttpGet(uri.build())
         request.setHeader("Accept", "application/json")
+        request.setHeader("User-Agent", "ModManager-Core ${Core.getCoreVersion(di)}")
         val response = client.execute(request)
 
         if (response.statusLine.statusCode != 200) {
@@ -46,7 +50,8 @@ class Modrinth : IStore {
 
         val searchResponse = json.decodeFromStream<SearchResponse>(response.entity.content)
         EntityUtils.consume(response.entity)
-        return searchResponse.hits.map { it.toMod() }
+        val storeService: IStoreService by di
+        return searchResponse.hits.map { it.toMod(storeService.licenses) }
     }
 
     private fun buildFacets(categories: List<Category>): String {
@@ -58,9 +63,25 @@ class Modrinth : IStore {
         return "$result]"
     }
 
+    override fun getLicences(): Map<String, String> {
+        val request = HttpGet("${uri}/tag/license")
+        request.setHeader("Accept", "application/json")
+        request.setHeader("User-Agent", "ModManager-Core ${Core.getCoreVersion(di)}")
+
+        val response = client.execute(request)
+
+        if (response.statusLine.statusCode != 200) {
+            EntityUtils.consume(response.entity)
+            throw ModManagerException("modmanager.error.status", response.statusLine.statusCode)
+        }
+        val licenses = json.decodeFromStream<Array<LicenseModel>>(response.entity.content)
+        return licenses.associate { it.short to it.name }
+    }
+
     override fun getCategories(): List<Category> {
         val request = HttpGet("${uri}/tag/category")
         request.addHeader("Accept", "application/json")
+        request.setHeader("User-Agent", "ModManager-Core ${Core.getCoreVersion(di)}")
         val response = client.execute(request)
         if (response.statusLine.statusCode != 200) {
             EntityUtils.consume(response.entity)
@@ -75,6 +96,7 @@ class Modrinth : IStore {
     override fun getMod(mod: Mod): Mod {
         val request = HttpGet("${uri}/project/${mod.id}")
         request.addHeader("Accept", "application/json")
+        request.setHeader("User-Agent", "ModManager-Core ${Core.getCoreVersion(di)}")
         val response = client.execute(request)
         if (response.statusLine.statusCode != 200) {
             EntityUtils.consume(response.entity)

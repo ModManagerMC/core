@@ -1,5 +1,6 @@
 package net.modmanagermc.core.discover
 
+import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.metadata.ModMetadata
 import java.nio.file.Path
 
@@ -27,6 +28,6 @@ interface IModDiscoveryService {
      *
      * @return the [Path] of the JAR or null if not found
      */
-    fun getJar(modId: String): Path?
+    fun getJar(fabricLoader: FabricLoader, modId: String): Path?
 
 }

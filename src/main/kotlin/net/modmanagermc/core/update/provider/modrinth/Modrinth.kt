@@ -47,6 +47,7 @@ class Modrinth(private val di: DI) : IUpdateProvider {
 
         val request = HttpPost("https://api.modrinth.com/v2/version_file/$hash/update?algorithm=$algorithm")
         request.setHeader("Accept", "application/json")
+        request.setHeader("User-Agent", "ModManager-Core ${Core.getCoreVersion(di)}")
         request.setHeader("Content-Type", "application/json")
         request.entity = StringEntity(
             Json.encodeToString(
@@ -93,6 +94,7 @@ class Modrinth(private val di: DI) : IUpdateProvider {
         val request = HttpGet(uri)
 
         request.setHeader("Accept", "application/json")
+        request.setHeader("User-Agent", "ModManager-Core ${Core.getCoreVersion(di)}")
         val response = client.execute(request)
         if (response.statusLine.statusCode != 200) {
             val error = json.decodeFromStream<ErrorResponse>(response.entity.content)
@@ -110,6 +112,7 @@ class Modrinth(private val di: DI) : IUpdateProvider {
     private fun getVersion(id: String): ModrinthVersion? {
         val request = HttpGet("https://api.modrinth.com/v2/version/${id}")
         request.addHeader("Accept", "application/json")
+        request.setHeader("User-Agent", "ModManager-Core ${Core.getCoreVersion(di)}")
 
         val response = client.execute(request)
         if (response.statusLine.statusCode != 200) {

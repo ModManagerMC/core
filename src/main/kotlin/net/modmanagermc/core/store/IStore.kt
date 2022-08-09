@@ -15,7 +15,7 @@ interface IStore {
 
     fun search(
         query: String,
-        categories: List<Category> = emptyList(),
+        categories: List<Category>,
         sort: Sort,
         page: Int,
         limit: Int
@@ -23,5 +23,7 @@ interface IStore {
 
     fun getCategories(): List<Category>
     fun getMod(mod: Mod): Mod?
+
+    fun getLicences(): Map<String, String>
 
 }

@@ -24,14 +24,14 @@ data class SearchResponse(
 
         private val blacklisted = listOf("fabric", "quilt", "forge")
 
-        fun toMod(): net.modmanagermc.core.model.Mod {
+        fun toMod(licenses: Map<String, String>): net.modmanagermc.core.model.Mod {
             return net.modmanagermc.core.model.Mod(
                 projectId,
                 title,
                 iconUrl,
                 description,
                 author,
-                license,
+                licenses.getOrDefault(license, license.uppercase()),
                 categories.filter { !blacklisted.contains(it) }.map { Category(it, "modmanager.category.$it") },
                 null
             )
