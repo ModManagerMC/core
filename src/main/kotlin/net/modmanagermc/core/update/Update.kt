@@ -20,5 +20,6 @@ import net.modmanagermc.core.model.Version
 
 data class Update(
     val modId: String,
+    val storeIds: Map<String, String>,
     val version: Version
 )

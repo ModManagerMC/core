@@ -93,8 +93,31 @@ class Modrinth(private val di: DI) : IUpdateProvider {
         return Version(
             updateResponse.id,
             updateResponse.projectId,
+            "modrinth",
             updateResponse.version,
+            updateResponse.changelog,
             updateResponse.dependencies.mapNotNull { toDependency(it) },
+            asset.filename,
+            asset.url,
+            asset.hashes,
+        )
+    }
+
+    override fun getLatestVersion(projectId: String): Version? {
+        var versions = getVersions(projectId)
+        if (versions.isEmpty()) {
+            return null
+        }
+        versions = versions.sortedBy { it.datePublished }
+        val version = versions[0]
+        val asset = version.files.firstOrNull() ?: return null
+        return Version(
+            version.id,
+            version.projectId,
+            "modrinth",
+            version.version,
+            version.changelog,
+            version.dependencies.mapNotNull { toDependency(it) },
             asset.filename,
             asset.url,
             asset.hashes,
@@ -159,6 +182,8 @@ class Modrinth(private val di: DI) : IUpdateProvider {
             }
             val asset = version.files.firstOrNull() ?: return null
             return Dependency(
+                version.projectId,
+                version.version,
                 asset.url,
                 asset.filename,
                 dep.dependencyType == "required",

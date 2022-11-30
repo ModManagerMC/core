@@ -19,6 +19,7 @@ package net.modmanagermc.core.discover
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.metadata.ModMetadata
 import java.nio.file.Path
+import java.util.StringJoiner
 
 /**
  * This service helps to interact with
@@ -45,5 +46,13 @@ interface IModDiscoveryService {
      * @return the [Path] of the JAR or null if not found
      */
     fun getJar(fabricLoader: FabricLoader, modId: String): Path?
+
+    /**
+     * Finds mod by the given hashes
+     */
+    fun findJarByHashes(fabricLoader: FabricLoader, hashes: Map<String, String>): Path?
+    fun getModMetadata(fabricLoader: FabricLoader, projectId: String): ModMetadata?
+
+    fun setProjectIdForModId(projectId: String, modId: String)
 
 }

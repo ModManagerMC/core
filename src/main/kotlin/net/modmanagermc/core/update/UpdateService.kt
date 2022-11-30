@@ -23,7 +23,9 @@ import kotlinx.coroutines.launch
 import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.mod.IModService
 import net.modmanagermc.core.model.JarFileInfo
+import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.model.ProcessingStatus
+import net.modmanagermc.core.model.Version
 import org.apache.logging.log4j.LogManager
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -32,12 +34,14 @@ internal class UpdateService(di: DI) : IUpdateService {
     private val modService: IModService by di
     private val logger = LogManager.getLogger("ModManager|UpdateService")
     private var status: ProcessingStatus = ProcessingStatus.PENDING
-    private val updates: MutableList<Update> = mutableListOf()
+    private val _updates: MutableList<Update> = mutableListOf()
 
     override val processingStatus: ProcessingStatus
         get() {
             return status
         }
+    override val updates: List<Update>
+        get() = _updates
 
     override fun checkUpdate() {
         logger.info("Checking for updates...")
@@ -58,15 +62,20 @@ internal class UpdateService(di: DI) : IUpdateService {
         }
     }
 
+    override fun getUpdate(mod: Mod): Update? {
+        return updates.find { it.storeIds.containsValue(mod.id) }
+    }
+
     private fun checkUpdate(fileInfo: JarFileInfo) {
         val versions = modService.getNewerVersions(fileInfo)
         if (versions.isEmpty()) {
             logger.info("No updates for {} found", fileInfo.modId)
             return
         }
-        val update = Update(fileInfo.modId, versions[0])
+        val storeIds = mutableMapOf(versions[0].provider to versions[0].providerModId)
+        val update = Update(fileInfo.modId, storeIds, versions[0])
         logger.info("Update for {} ({} -> {}) found", fileInfo.modId, fileInfo.version, update.version.version)
-        updates.add(update)
+        _updates.add(update)
     }
 
 }

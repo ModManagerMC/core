@@ -36,19 +36,19 @@ class ModListController(private val view: View) {
     var previousPageAvailable = false
     var selectedCategories: List<Category> = emptyList()
     var mods: List<Mod> = emptyList()
-    var categories: List<Category> = emptyList()
+    var categories: MutableList<Category> = mutableListOf(Category("updatable", "modmanager.category.updatable"))
     var selectedMod: Mod? = null
     var loading: Boolean = false
 
     fun init() = GlobalScope.launch(Dispatchers.IO) {
         loading = true
         GlobalScope.launch(Dispatchers.Default) {
-            delay(2000L)
+            delay(1500L)
             if (loading) {
                 view.setLoading(true)
             }
         }
-        categories = storeService.categories
+        categories.addAll(storeService.categories)
         view.setCategories(categories)
         search()
         loading = false
@@ -104,7 +104,19 @@ class ModListController(private val view: View) {
         previousPageAvailable = false
     }
 
+    fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        if (view.searchFieldFocused && keyCode == 257) {
+            page = 0
+            view.setScrollAmount(0.0)
+            search()
+            return true
+        }
+        return false
+    }
+
     interface View {
+
+        val searchFieldFocused: Boolean
 
         fun setMods(mods: List<Mod>)
         fun error(e: Exception)

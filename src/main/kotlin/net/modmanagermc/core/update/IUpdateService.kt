@@ -16,7 +16,9 @@
 
 package net.modmanagermc.core.update
 
+import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.model.ProcessingStatus
+import net.modmanagermc.core.model.Version
 
 /**
  * Processes the installed mods and sends them to
@@ -28,7 +30,9 @@ import net.modmanagermc.core.model.ProcessingStatus
 interface IUpdateService {
 
     val processingStatus: ProcessingStatus
+    val updates: List<Update>
 
     fun checkUpdate()
+    fun getUpdate(mod: Mod): Update?
 
 }

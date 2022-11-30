@@ -31,7 +31,9 @@ data class Version(
      * Provider specific id for the mod
      */
     val providerModId: String,
+    val provider: String,
     val version: String,
+    val changelog: String,
     /**
      * A list of dependencies for the mod
      */

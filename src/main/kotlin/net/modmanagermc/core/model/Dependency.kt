@@ -23,6 +23,8 @@ package net.modmanagermc.core.model
  * @since 1.0.0
  */
 data class Dependency(
+    val projectId: String,
+    val version: String,
     val downloadUrl: String,
     val filename: String,
     val required: Boolean,

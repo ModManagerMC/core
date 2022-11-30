@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package net.modmanagermc.core.store.provider.modrinth.models
+package net.modmanagermc.core.task
 
-import net.modmanagermc.core.model.Mod
+object TaskManager {
 
-@kotlinx.serialization.Serializable
-data class DetailedMod(
-    val body: String?
-) {
+    private val tasks: MutableList<Runnable> = mutableListOf()
 
-    fun toMod(mod: Mod): Mod {
-        return mod.copy(fullDescription = body)
+    fun add(task: Runnable) {
+        tasks.add(task)
     }
+
+    fun executeTasks() {
+        val tasks = ArrayList(this.tasks)
+        for (task in tasks) {
+            task.run()
+            this.tasks.remove(task)
+        }
+    }
+
 }

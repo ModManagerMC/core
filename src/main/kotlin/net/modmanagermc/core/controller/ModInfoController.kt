@@ -22,7 +22,6 @@ import net.modmanagermc.core.mod.IModService
 import net.modmanagermc.core.mod.State
 import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.store.IStoreService
-import kotlin.time.ExperimentalTime
 
 class ModInfoController(var mod: Mod, private val view: View) {
 
@@ -35,7 +34,7 @@ class ModInfoController(var mod: Mod, private val view: View) {
     fun init() {
         loading = true
         GlobalScope.launch(Dispatchers.IO) {
-            delay(2000L)
+            delay(1500L)
             if (loading) {
                 view.setLoading(true)
             }
@@ -60,6 +59,10 @@ class ModInfoController(var mod: Mod, private val view: View) {
     }
 
     fun doAction() {
+        if (state == State.DOWNLOADABLE) {
+            modService.install(mod)
+            return
+        }
     }
 
     interface View {

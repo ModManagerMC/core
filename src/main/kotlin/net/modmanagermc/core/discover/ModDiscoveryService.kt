@@ -19,11 +19,16 @@ package net.modmanagermc.core.discover
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.metadata.ModMetadata
 import net.modmanagermc.core.di.DI
+import net.modmanagermc.core.extensions.generateHashes
 import net.modmanagermc.core.extensions.readMetadata
 import net.modmanagermc.core.extensions.updatesDisabled
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.StringJoiner
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
+import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Implementation of [IModDiscoveryService]
@@ -35,7 +40,9 @@ internal class ModDiscoveryService(di: DI) : IModDiscoveryService {
 
     private val fabricLoader: FabricLoader by di
     private val blocked = listOf("minecraft", "java")
-    private val jars = mutableMapOf<String, String>()
+    private val projectIdModIs = mutableMapOf<String, String>()
+    private val modIdJars = mutableMapOf<String, String>()
+    private val hashJars = mutableMapOf<String, String>()
 
     override fun getMods(): List<ModMetadata> {
         return fabricLoader.allMods.map { it.metadata }
@@ -47,17 +54,47 @@ internal class ModDiscoveryService(di: DI) : IModDiscoveryService {
     }
 
     override fun getJar(fabricLoader: FabricLoader, modId: String): Path? {
-        if (jars.containsKey(modId)) {
-            return Path.of(jars[modId]!!)
+        if (modIdJars.containsKey(modId)) {
+            return Path.of(modIdJars[modId]!!)
         }
         val files =
             Files.walk(fabricLoader.gameDir.resolve("mods")).filter { "jar".equals(it.extension, true) }
         files.forEach {
             val metadata = it.readMetadata(fabricLoader) ?: return@forEach
-            jars[metadata.id] = it.toFile().absolutePath
+            modIdJars[metadata.id] = it.absolutePathString()
         }
-        val path = jars[modId] ?: return null
+        val path = modIdJars[modId] ?: return null
         return Path.of(path)
+    }
+
+    override fun findJarByHashes(fabricLoader: FabricLoader, hashes: Map<String, String>): Path? {
+        for ((key, value) in hashJars) {
+            if (hashes.containsValue(key)) {
+                return Path.of(value)
+            }
+        }
+        val files = Files.walk(fabricLoader.gameDir.resolve("mods")).filter { "jar".equals(it.extension, true) }
+        files.forEach { path ->
+            path.generateHashes().forEach {
+                hashJars[it.value] = path.absolutePathString()
+            }
+        }
+        for ((key, value) in hashJars) {
+            if (hashes.containsValue(key)) {
+                return Path.of(value)
+            }
+        }
+        return null
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun getModMetadata(fabricLoader: FabricLoader, projectId: String): ModMetadata? {
+        val modId = projectIdModIs[projectId] ?: return null
+        return fabricLoader.getModContainer(modId).getOrNull()?.metadata
+    }
+
+    override fun setProjectIdForModId(projectId: String, modId: String) {
+        projectIdModIs[projectId] = modId
     }
 
 }

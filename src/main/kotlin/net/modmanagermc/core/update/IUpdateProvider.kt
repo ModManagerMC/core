@@ -31,4 +31,6 @@ interface IUpdateProvider {
 
     fun getVersion(fileInfo: JarFileInfo): Version?
 
+    fun getLatestVersion(projectId: String): Version?
+
 }

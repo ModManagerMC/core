@@ -27,6 +27,7 @@ dependencies {
     local("net.fabricmc:fabric-loader:$loaderVersion")
     local("org.apache.httpcomponents:httpclient:4.5.13")
     local("org.apache.logging.log4j:log4j-api:2.17.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
     testImplementation("org.apache.logging.log4j:log4j-core:2.17.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")

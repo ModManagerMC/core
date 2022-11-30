@@ -16,8 +16,10 @@
 
 package net.modmanagermc.core.update.provider.modrinth.model
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.StringJoiner
 
 /*
 {
@@ -74,6 +76,8 @@ data class ModrinthVersion(
     val versionType: String,
     @SerialName("project_id")
     val projectId: String,
+    @SerialName("date_published")
+    val datePublished: Instant,
     val loaders: List<String>,
     val files: List<Asset>
 ) {

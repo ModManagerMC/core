@@ -26,6 +26,8 @@ import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Paths
+import java.util.Arrays
+import java.util.StringJoiner
 
 /**
  * ModManager's config representation
@@ -39,7 +41,8 @@ import java.nio.file.Paths
 @Serializable
 data class Config(
     var updateChannel: UpdateChannel = ALL,
-    var hidden: ArrayList<String> = ArrayList()
+    var hidden: ArrayList<String> = ArrayList(),
+    var remove: ArrayList<String> = ArrayList()
 ) {
 
     companion object {
@@ -59,21 +62,21 @@ data class Config(
                 if (e !is FileNotFoundException && e !is NoSuchFileException) {
                     e.printStackTrace()
                 }
-                saveConfig(Config())
+                Config().save()
             }
         }
+    }
 
-        private fun saveConfig(config: Config): Config {
-            try {
-                val dir = Paths.get("config", "modmanager")
-                dir.toFile().mkdirs()
-                val file = dir.resolve("modmanager.json")
-                val data = json.encodeToString(config)
-                Files.write(file, data.encodeToByteArray())
-            } catch (ignored: Exception) {
-            }
-            return config
+    fun save(): Config {
+        try {
+            val dir = Paths.get("config", "modmanager")
+            dir.toFile().mkdirs()
+            val file = dir.resolve("modmanager.json")
+            val data = json.encodeToString(this)
+            Files.write(file, data.encodeToByteArray())
+        } catch (ignored: Exception) {
         }
+        return this
     }
 
     /**

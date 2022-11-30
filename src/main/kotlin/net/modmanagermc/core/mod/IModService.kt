@@ -17,8 +17,10 @@
 package net.modmanagermc.core.mod
 
 import net.modmanagermc.core.model.JarFileInfo
+import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.model.Version
 import net.modmanagermc.core.update.IUpdateProvider
+import net.modmanagermc.core.update.Update
 
 /**
  * @author DeathsGun
@@ -36,4 +38,10 @@ interface IModService {
 
     fun getModState(modId: String): State
 
+    fun install(mod: Mod)
+
+    fun installVersion(version: Version)
+
+    fun removeMod(modId: String)
+    fun update(update: Update)
 }

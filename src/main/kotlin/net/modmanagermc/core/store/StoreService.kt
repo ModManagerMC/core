@@ -20,6 +20,9 @@ import net.modmanagermc.core.di.DI
 import net.modmanagermc.core.model.Category
 import net.modmanagermc.core.model.Mod
 import net.modmanagermc.core.store.provider.modrinth.Modrinth
+import net.modmanagermc.core.update.IUpdateService
+import net.modmanagermc.core.update.Update
+import org.apache.logging.log4j.LogManager
 
 internal class StoreService(di: DI) : IStoreService {
 
@@ -27,10 +30,12 @@ internal class StoreService(di: DI) : IStoreService {
     override var store: String = "modrinth"
 
     // Cache stores
+    private val logger = LogManager.getLogger("ModManager|StoreService")
     private val _categories: MutableMap<String, List<Category>> = mutableMapOf()
     private val stores: MutableList<IStore> = mutableListOf(Modrinth(di))
     private val modCache: MutableMap<String, List<Mod>> = mutableMapOf()
     override val licenses: Map<String, String>
+    private val updateService: IUpdateService by di
 
     init {
         licenses = getStore()?.getLicences() ?: emptyMap()
@@ -49,6 +54,9 @@ internal class StoreService(di: DI) : IStoreService {
         }
 
     override fun search(query: String, categories: List<Category>, sort: Sort, page: Int, limit: Int): List<Mod> {
+        if (categories.any { it.id == "updatable" }) {
+            return searchUpdates(query, categories, sort, page, limit)
+        }
         val store = getStore() ?: return emptyList()
         val id = searchId(query, categories, sort, page, limit)
         var mods = modCache.getOrDefault(id, emptyList())
@@ -57,6 +65,26 @@ internal class StoreService(di: DI) : IStoreService {
             modCache[id] = mods
         }
         return mods
+    }
+
+    private fun searchUpdates(query: String, categories: List<Category>, sort: Sort, page: Int, limit: Int): List<Mod> {
+        val searchId = searchId(query, categories, sort, page, limit)
+        var mods = modCache.getOrDefault(searchId, emptyList())
+
+        if (mods.isEmpty()) {
+            mods = updateService.updates.mapNotNull { getInfo(it) }
+            modCache[searchId] = mods
+        }
+        return mods
+    }
+
+    private fun getInfo(update: Update): Mod? {
+        val store = stores.find { update.storeIds.containsKey(it.name) }
+        if (store == null) {
+            logger.warn("Couldn't find any store for \"{}\"", update.modId)
+            return null
+        }
+        return store.getMod(update.storeIds[store.name]!!)
     }
 
     override fun getMod(mod: Mod): Mod? {

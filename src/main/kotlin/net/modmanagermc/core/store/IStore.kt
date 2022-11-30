@@ -40,6 +40,8 @@ interface IStore {
     fun getCategories(): List<Category>
     fun getMod(mod: Mod): Mod?
 
+    fun getMod(mod: String): Mod?
+
     fun getLicences(): Map<String, String>
 
 }
