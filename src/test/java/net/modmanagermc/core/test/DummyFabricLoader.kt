@@ -12,10 +12,6 @@ import java.util.*
 
 class DummyFabricLoader(private val mods: MutableList<ModContainer>) : FabricLoader {
 
-    init {
-        mods.add(DummyMinecraftContainer())
-    }
-
     override fun <T : Any?> getEntrypoints(key: String?, type: Class<T>?): MutableList<T> {
         return mutableListOf()
     }

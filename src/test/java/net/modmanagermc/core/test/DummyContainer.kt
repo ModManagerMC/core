@@ -7,9 +7,9 @@ import net.fabricmc.loader.impl.metadata.ModOriginImpl
 import java.nio.file.Path
 import java.util.*
 
-class DummyMinecraftContainer : ModContainer {
+class DummyContainer(private val modId: String, private val version: String) : ModContainer {
     override fun getMetadata(): ModMetadata {
-        return DummyMetadata("minecraft", "1.18.2")
+        return DummyMetadata(modId, version)
     }
 
     override fun getRootPaths(): MutableList<Path> {

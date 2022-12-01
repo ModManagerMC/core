@@ -2,16 +2,28 @@ package net.modmanagermc.core.mod
 
 import net.fabricmc.loader.api.FabricLoader
 import net.modmanagermc.core.di.DI
+import net.modmanagermc.core.discover.IModDiscoveryService
+import net.modmanagermc.core.discover.ModDiscoveryService
 import net.modmanagermc.core.model.JarFileInfo
 import net.modmanagermc.core.test.DummyFabricLoader
+import net.modmanagermc.core.test.DummyContainer
 import org.junit.Test
 import kotlin.test.assertEquals
 
 internal class ModServiceTest {
 
     private val di = DI {
-        bind<FabricLoader> { DummyFabricLoader(mutableListOf()) }
+        bind<FabricLoader> {
+            DummyFabricLoader(
+                mutableListOf(
+                    DummyContainer("minecraft", "1.18.2"),
+                    DummyContainer("modmanager", "2.0.0"),
+                    DummyContainer("modmanager-core", "2.0.0")
+                )
+            )
+        }
         bind<IModService> { ModService(this) }
+        bind<IModDiscoveryService> { ModDiscoveryService(this) }
     }
     private val modService: IModService by di
 
